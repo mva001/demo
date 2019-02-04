@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="ISO-8859-1">
+<title>Insert title here</title><!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+<body>
+<h3> Exchange Rates</h3>
+<div>
+<button id = "butLoad" class = "btn btn-lg btn-primary">Load Rates From Server</button>
+</div>
+<div>
+<button id = "butSend" class = "btn btn-lg btn-primary">Send Rate To Server</button>
+<form onsubmit="createRate()">
+	Currency : <input type = "text" name ="currency" id = "idcurrency">
+	Date : <input type = "date" name ="date" id = "iddate">
+	Rate : <input type = "number" name ="rate" id = "idrate">
+	<button id = "butCreate" class = "btn btn-lg btn-primary" value = "Submit">Create</button>
+</form>
+</div>
+
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+<script>
+function loadRates() {
+	$.ajax({
+		url: "/api/exchangerates",
+		context: document.body
+	}).done(function(data) {
+		data.forEach(function(d)
+		{
+			console.log(d.currency);
+		});
+		$("#rates").html(data);
+	});	
+}
+function sendData() {
+	var model = {};
+	var modelS = JSON.stringify(model);
+	console.log(modelS);
+	$.ajax({
+		url: "/api/exchangerates",
+		context: document.body, 
+		type: "POST", 
+		data: modelS
+	}).done(function(data) {
+		alert("ok");
+	}).fail(function() {
+		alert("nok");
+	});		
+}
+function createRate() {
+	console.log("Create Rate");
+	
+	var model = {};
+	model.Currency = $('#idcurrency').val();
+	model.Rate = $('#idrate').val();
+	model.Date = $('#iddate').val();
+	var modelS = JSON.stringify(model);
+	console.log(modelS);
+	$.ajax({
+		url: "/api/createrate",
+		context: document.body, 
+		type: "POST", 
+		data: modelS
+	}).done(function(data) {
+		alert("ok");
+	}).fail(function() {
+		alert("nok");
+	});		
+}
+
+$(function() {
+	$("#butLoad").click(loadRates);
+	$("#butSend").click(sendData);
+});
+</script>
+</body>
+</html>

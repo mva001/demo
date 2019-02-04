@@ -1,0 +1,13 @@
+public static class Foo {
+	public int i = 0;
+}
+
+static void doDo(Foo f) {
+	f.i=3;
+}
+
+Foo foo = new Foo();
+System.out.println(foo.i);
+doDo(foo);
+System.out.println(foo.i);
+
