@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @RestController
 public class ExchangeRateController {
@@ -40,5 +40,29 @@ public class ExchangeRateController {
 		l.info(""+sData.getExchangeDate());
 		//return String.format("%s %s %d", sData.getCurrency(), sData.getExchangeDate(), sData.getRateToRON());
 		return String.format("Created %s %s %s", sData.getExchangeDate(), sData.getCurrency(),sData.getRateToRON());
+	}
+	
+	
+	/// ---- Si cu stringuri ---
+	
+	@PostMapping (value="/api/exchangerates2")
+	public String createRate2(@RequestBody String sData) {
+		Logger l = Logger.getLogger(ExchangeRateController.class);
+		ObjectMapper om = new ObjectMapper();
+		ExchangeRate rate = null;
+		try {
+			rate = om.readValue(sData, ExchangeRate.class);
+			l.info(""+rate.getCurrency());
+			l.info(""+rate.getRateToRON());
+			l.info(""+rate.getExchangeDate());
+		} catch(Exception e) {
+			l.debug("Error on mapping");
+		}	
+		
+		if(rate!=null) {
+			return String.format("Created %s %s %s", rate.getExchangeDate(), rate.getCurrency(),rate.getRateToRON());
+		} else {
+			return "NOK";
+		}
 	}
 }
