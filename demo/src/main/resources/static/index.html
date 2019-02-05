@@ -11,15 +11,16 @@
 </head>
 <body>
 <h3> Exchange Rates</h3>
+<div id="rates"></div>
 <div>
 <button id = "butLoad" class = "btn btn-lg btn-primary">Load Rates From Server</button>
 </div>
 <div>
 <button id = "butSend" class = "btn btn-lg btn-primary">Send Rate To Server</button>
 <form onsubmit="createRate()">
-	Currency : <input type = "text" name ="currency" id = "idcurrency">
-	Date : <input type = "date" name ="date" id = "iddate">
-	Rate : <input type = "number" name ="rate" id = "idrate">
+	Currency : <input type = "text" name ="currency" id = "idcurrency" />
+	Date : <input type = "datetime" name ="date" id = "iddate" />
+	Rate : <input type = "number" name ="rate" id = "idrate" />
 	<button id = "butCreate" class = "btn btn-lg btn-primary" value = "Submit">Create</button>
 </form>
 </div>
@@ -35,41 +36,30 @@ function loadRates() {
 		url: "/api/exchangerates",
 		context: document.body
 	}).done(function(data) {
+		var list = $("<ul></ul>")
 		data.forEach(function(d)
 		{
-			console.log(d.currency);
+			var r = $("<li>"+d["currency"]+"</li>");
+			list.append(r);
 		});
-		$("#rates").html(data);
+		$("#rates").append(list);
 	});	
 }
-function sendData() {
+
+function createRate() {
+	console.log("Create Rate");
+	
 	var model = {};
+	model.currency = $('#idcurrency').val();
+	model.rateToRON = $('#idrate').val();
+	model.exchangeDate = $('#iddate').val();
 	var modelS = JSON.stringify(model);
 	console.log(modelS);
 	$.ajax({
 		url: "/api/exchangerates",
 		context: document.body, 
 		type: "POST", 
-		data: modelS
-	}).done(function(data) {
-		alert("ok");
-	}).fail(function() {
-		alert("nok");
-	});		
-}
-function createRate() {
-	console.log("Create Rate");
-	
-	var model = {};
-	model.Currency = $('#idcurrency').val();
-	model.Rate = $('#idrate').val();
-	model.Date = $('#iddate').val();
-	var modelS = JSON.stringify(model);
-	console.log(modelS);
-	$.ajax({
-		url: "/api/createrate",
-		context: document.body, 
-		type: "POST", 
+		contentType: "application/json",
 		data: modelS
 	}).done(function(data) {
 		alert("ok");
@@ -80,7 +70,7 @@ function createRate() {
 
 $(function() {
 	$("#butLoad").click(loadRates);
-	$("#butSend").click(sendData);
+	$("#butSend").click(createRate);
 });
 </script>
 </body>
